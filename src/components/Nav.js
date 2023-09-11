@@ -60,9 +60,6 @@ const NavSubmenu = styled.ul`
             color: #fff;
         }
     }
-    &.on{
-        height: 200px;
-   }
 `
 const NavMember = styled.div`
     ul{
@@ -80,9 +77,10 @@ function Nav() {
         const value = listLength * 43+"px";
         console.log(value);
         
-        return value;
+        return setIsValue(value);
     }
     const [isActive, setIsActive] = useState(-1);
+    const [isValue, setIsValue] = useState();
 
     const SubMenu = [
         ["인사말", "연혁", "내부전경", "오시는길"],
@@ -143,7 +141,7 @@ function Nav() {
                         //권장코드
                         Nav2.map((e,i)=>{
                             return(
-                                <li key={i} style={{height: SubMenuHeight}}
+                                <li key={i}
                                 onMouseOver={()=>{
                                     setIsActive(i);
                                     SubMenuHeight(i);
@@ -151,7 +149,7 @@ function Nav() {
                                 onMouseOut={()=>{
                                     setIsActive(-1);
                                 }}><NavLink to={e.link}>{e.title}</NavLink>
-                                    <NavSubmenu className={`sub_list ${isActive === i ? "on" : ""}`}>
+                                    <NavSubmenu className={`sub_list`} style={{height: isActive === i && isValue}}>
                                         {
                                             SubMenu[i].map((el, index)=>{
                                                 return(
