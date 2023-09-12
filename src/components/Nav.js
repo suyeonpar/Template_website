@@ -52,6 +52,7 @@ const NavSubmenu = styled.ul`
     height: 0;
     overflow: hidden;
     border-radius: 20px;
+    height: ${({$isopen, $height}) => ($isopen === "true" ? $height : "0px")};
     li{
         flex-basis: 100% !important;
         padding: 10px 0;
@@ -70,6 +71,7 @@ const NavMember = styled.div`
 
 function Nav() {
     const SubMenuHeight = (e) =>{
+        //const [isHeight, setIsHeight] = useState();
         const list = document.querySelectorAll(".sub_list")[e];
         console.log(list);
         const listLength = list.querySelectorAll("li").length;
@@ -81,7 +83,7 @@ function Nav() {
     }
     const [isActive, setIsActive] = useState(-1);
     const [isValue, setIsValue] = useState();
-
+    
     const SubMenu = [
         ["인사말", "연혁", "내부전경", "오시는길"],
         ["사업소개", "사업소개2", "사업소개3"],
@@ -149,7 +151,7 @@ function Nav() {
                                 onMouseOut={()=>{
                                     setIsActive(-1);
                                 }}><NavLink to={e.link}>{e.title}</NavLink>
-                                    <NavSubmenu className={`sub_list`} style={{height: isActive === i && isValue}}>
+                                    <NavSubmenu className={`sub_list`} $isopen={isActive === i ? "true" : "false"} $height={isValue}>
                                         {
                                             SubMenu[i].map((el, index)=>{
                                                 return(

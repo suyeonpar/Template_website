@@ -1,8 +1,9 @@
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {styled } from 'styled-components'
-//import GlobalStyle from '../components/GlobalStyle'
+import { ToggleTheme } from '../store'
 
 
 const ASide = styled.div`
@@ -10,7 +11,7 @@ const ASide = styled.div`
         right: 20px;
         bottom: 20px;
         box-shadow: 0px 0px 3px gray;
-        background-color:  ${(props) => props.theme.colors.Primary};
+        background-color:  ${({$isdark}) => ($isdark === 'light' ? '#fff' : '#333')};
         border-radius: 50%;
         cursor: pointer;
         width: 50px;
@@ -20,11 +21,15 @@ const ASide = styled.div`
         color: ${(props) => props.theme.colors.Secondary};
     `
 
-function Aside({ThemeSelect, themeConfig}) {
+function Aside() {
+    const theme = useSelector(state => state.dark);
+    console.log(theme)
+    const dispatch = useDispatch();
+
     return (
         <>
-            <ASide onClick={ThemeSelect}>
-                <FontAwesomeIcon icon={ themeConfig === 'light' ?  faMoon: faSun} size="lg"/>
+            <ASide $isdark={theme} onClick={() => {dispatch(ToggleTheme())}}>
+                <FontAwesomeIcon icon={theme === 'light' ?  faMoon : faSun} size="lg"/>
             </ASide>
         </>
   )
