@@ -1,9 +1,9 @@
-import { faArrowRightFromBracket, faLock, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRightFromBracket, faLock, faUser, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
-
+import Mnav from './Mnav'
 
 const NavContent = styled.div`
     width: 100%;
@@ -39,8 +39,17 @@ const NavList = styled.div`
             position: relative;
             flex-basis: 25%;
             text-align: center;
+            a.active{
+                font-weight: bold;
+            }
         }
     }
+`
+const StyledIcon = styled(FontAwesomeIcon)`
+    transition: all 0.5s;
+    font-size: 12px;
+    vertical-align: baseline;
+    transform: ${({$isopen}) => $isopen === 'true' ? 'rotate(180deg)' : '0'}; //string으로 했다면 직접 써줘야한다
 `
 
 const NavSubmenu = styled.ul`
@@ -66,8 +75,89 @@ const NavMember = styled.div`
     ul{
         display: flex;
         column-gap: 20px;
+        a.active{
+                font-weight: bold;
+            }
+    }
+    @media screen and (max-width: 1024px) {
+        display: none;
+        }
+`
+
+const Hamburger = styled.div`
+    position: fixed;
+    right: 16px;
+    top: 24px;
+    transition: all 1s;
+    z-index: 50;
+    cursor: pointer;
+    > div{
+        width: 30px;
+        height: 2px;
+        background-color: #000;
+        border-radius: 4px;
+        margin: 6px;
+        transition: all 1s;
+    }
+    &.on div:nth-child(1){transform: rotate(45deg) translateY(12px);}
+    &.on div:nth-child(2){opacity: 0; transform: translateX(-30px) rotate(720deg);}
+    &.on div:nth-child(3){transform: rotate(-45deg) translateY(-12px);}
+    @media screen and (min-width: 1024px){display: none;}
+    @media screen and (max-width: 768px){right: 24px;}
+`
+const Container = styled.div`
+    width: 320px;
+    height: 100%;
+    position: fixed;
+    background-color: rgb(249,250,251);
+    right: -320px; top: 0;
+    right: ${({$isopen}) => $isopen ? "0px" : "-320px"};
+    padding: 48px;
+    box-sizing: border-box;
+    z-index: 40;
+    transition: 0.5s;
+    @media screen and (min-width: 1024px) {
+        display: none;
+    }>ul{
+        margin-top: 24px;
+        >li{
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            cursor: pointer;
+        }
     }
 `
+const Msubmenu = styled(NavSubmenu)`
+    width: 100%;
+    position: relative;
+    background-color: transparent;
+    text-align: left;
+    >li{
+        padding-left: 15px;
+        a{color: #000;}
+    }
+`
+const MsubmenuMember = styled(NavMember)`
+    margin-top: 45px;
+    ul{
+        justify-content: center;
+        li{
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #ddd;
+            &:nth-child(2){
+                background-color: #ddf;
+            }
+            a{color: #fff;}
+        }
+    }
+    @media screen and (max-width: 1024px) {
+        display: block;
+        }
+`
+
 
 function Nav() {
     const SubMenuHeight = (e) =>{
@@ -83,41 +173,102 @@ function Nav() {
     }
     const [isActive, setIsActive] = useState(-1);
     const [isValue, setIsValue] = useState();
-    
-    const SubMenu = [
-        ["인사말", "연혁", "내부전경", "오시는길"],
-        ["사업소개", "사업소개2", "사업소개3"],
-        ["제품소개", "제품소개2", "제품소개3"],
-        ["공지사항", "온라인 상담", "질문과답변", "갤러리"]
-    ]
-    const SubMenuLink = [
-        ["/company/greentings", "/company/history", "/company/interior", "/company/directions"],
-        ["/business/business-1", "/business/business-2", "/business/business-3"],
-        ["/product/product-1", "/product/product-2", "/product/product-3"],
-        ["/service/notice", "/service/online", "/service/qna", "/service/gallery"]
-    ]
+    const SubData = {
+        company: [
+            {
+                title: "인사말",
+                link: "/company/greentings" 
+            },
+            {
+                title: "연혁",
+                link: "/company/history"
+            },
+            {
+                title: "내부전경",
+                link: "/company/interior"
+            },
+            {
+                title: "오시는길",
+                link: "/company/directions"
+            }
+        ],
+        business: [
+            {
+                title: "사업소개",
+                link: "/business/business-1"
+            },
+            {
+                title: "사업소개2",
+                link: "/business/business-2"
+            },
+            {
+                title: "사업소개3",
+                link: "/business/business-3"
+            }
+        ],
+        product: [
+            {
+                title: "제품소개",
+                link: "/product/product-1"
+            },
+            {
+                title: "제품소개2",
+                link: "/product/product-2"
+            },
+            {
+                title: "제품소개3",
+                link: "/product/product-3"
+            }
+        ],
+        service: [
+            {
+                title: "공지사항",
+                link: "/service/notice"
+            },
+            {
+                title: "온라인 상담",
+                link: "/service/online"
+            },
+            {
+                title: "질문과답변",
+                link: "/service/qna"
+            },
+            {
+                title: "갤러리",
+                link: "/service/gallery"
+            }
+        ]
+    }
+    //변수명["문자열"][0].title
+    // const SubMenu = [
+    //     ["인사말", "연혁", "내부전경", "오시는길"],
+    //     ["사업소개", "사업소개2", "사업소개3"],
+    //     ["제품소개", "제품소개2", "제품소개3"],
+    //     ["공지사항", "온라인 상담", "질문과답변", "갤러리"]
+    // ]
+    // const SubMenuLink = [
+    //     ["/company/greentings", "/company/history", "/company/interior", "/company/directions"],
+    //     ["/business/business-1", "/business/business-2", "/business/business-3"],
+    //     ["/product/product-1", "/product/product-2", "/product/product-3"],
+    //     ["/service/notice", "/service/online", "/service/qna", "/service/gallery"]
+    // ]
 
     const Nav = [
-        ["회사소개", "사업소개", "제품소개", "고객센터"],
-        ["/company", "/business", "/product", "/service"]
-    ]
-
-    const Nav2 = [
         {
             title: "회사소개",
-            link: "/company"
+            link: "company"
         },
         {
             title: "사업소개",
-            link: "/business"
+            link: "business"
         },
         {
             title: "제품소개",
-            link: "/product"
+            link: "product"
         },
         {
             title: "고객센터",
-            link: "/service"
+            link: "service"
         }
     ]
     // SubMenu[i].map((e,index)=>{return(console.log(e,index))})
@@ -141,7 +292,7 @@ function Nav() {
                         // })
 
                         //권장코드
-                        Nav2.map((e,i)=>{
+                        Nav.map((e,i)=>{
                             return(
                                 <li key={i}
                                 onMouseOver={()=>{
@@ -150,12 +301,12 @@ function Nav() {
                                 }} 
                                 onMouseOut={()=>{
                                     setIsActive(-1);
-                                }}><NavLink to={e.link}>{e.title}</NavLink>
+                                }}><NavLink to={`/${e.link}`}>{e.title}</NavLink> <StyledIcon icon={faChevronDown} $isopen={isActive === i ? 'true' : 'false'} />
                                     <NavSubmenu className={`sub_list`} $isopen={isActive === i ? "true" : "false"} $height={isValue}>
                                         {
-                                            SubMenu[i].map((el, index)=>{
+                                            SubData[e.link].map((el, index)=>{
                                                 return(
-                                                    <li key={index}><NavLink to={SubMenuLink[i][index]}>{el}</NavLink></li>
+                                                    <li key={index}><NavLink to={el.link}>{el.title}</NavLink></li>
                                                 )
                                             })
                                         }
@@ -180,6 +331,52 @@ function Nav() {
             </NavMember>
         </NavWrap>
     </NavContent>
+    {/* 모바일네비 */}
+        <Hamburger onClick={()=>{setIsActive(!isActive)}} className={isActive && 'on'}>
+            { //어떠한 데이터 없이 반복문 돌릴때 _ > i만 필요할때 쓴다 e를 쓸필요는 없음
+                Array(3).fill().map((_,i)=>{
+                    return(
+                        <div key={i}></div>
+                    )
+                })
+            }
+        </Hamburger>
+        <Container $isopen={isActive}>
+            <MsubmenuMember>
+                <ul>
+                    <li><NavLink to="/login">
+                        <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> 로그인
+                        </NavLink>
+                    </li>
+                    <li><NavLink to="/member">
+                        <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> 회원가입
+                        </NavLink>
+                    </li>
+                </ul>
+            </MsubmenuMember>
+                <ul>
+                    {
+                        Nav.map((e,i)=>{
+                            return(
+                                <li key={i} onClick={()=>{
+                                    SubMenuHeight(i);
+                                    (isActive !== i ? setIsActive(i) : setIsActive(-1));
+                                }}>{e.title}
+                                    <Msubmenu className='sub_list' $isopen={isActive === i ? 'true' : 'false'} $height={isValue}>
+                                    {
+                                        SubData[e.link].map((el,index)=>{
+                                            return(
+                                                <li key={index}><NavLink to={el.link}>{el.title}</NavLink></li>
+                                            )
+                                        })
+                                    }  
+                                    </Msubmenu>
+                                </li>
+                            )
+                        })
+                    }
+                </ul>
+        </Container>
     </>
   )
 }

@@ -7,8 +7,12 @@ import { useState } from "react";
 import Nav from "./components/Nav";
 import store from "./store";
 import { Provider, useSelector } from "react-redux";
+import Member from "./pages/Member";
+import Login from "./pages/Login";
 
 function App() {
+  
+  console.log(process.env)
 
   const light = {
     colors : {
@@ -70,6 +74,8 @@ function Inner(){
       <Nav />
       <Routes>
         <Route path="/" element={<Main/>}></Route>
+        <Route path="/member" element={<Member/>}></Route>
+        <Route path="/login" element={<Login />}></Route>
       </Routes>
     </ThemeProvider>
     </>

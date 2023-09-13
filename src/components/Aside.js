@@ -18,7 +18,9 @@ const ASide = styled.div`
         height: 50px;
         line-height: 50px;
         text-align: center;
-        color: ${(props) => props.theme.colors.Secondary};
+        svg{
+            color: ${({$isdark}) => ($isdark === 'light' ? '#000' : '#d9d9d9')};
+        }
     `
 
 function Aside() {
@@ -32,7 +34,7 @@ function Aside() {
                 <FontAwesomeIcon icon={theme === 'light' ?  faMoon : faSun} size="lg"/>
             </ASide>
         </>
-  )
+    )
 }
 
 export default Aside
