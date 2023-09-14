@@ -163,11 +163,11 @@ function Nav() {
     const SubMenuHeight = (e) =>{
         //const [isHeight, setIsHeight] = useState();
         const list = document.querySelectorAll(".sub_list")[e];
-        console.log(list);
+        //console.log(list);
         const listLength = list.querySelectorAll("li").length;
-        console.log(listLength);
+        //console.log(listLength);
         const value = listLength * 43+"px";
-        console.log(value);
+        //console.log(value);
         
         return setIsValue(value);
     }
