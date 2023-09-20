@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
-import Mnav from './Mnav'
+import { useSelector } from 'react-redux'
 
 const NavContent = styled.div`
     width: 100%;
@@ -160,6 +160,7 @@ const MsubmenuMember = styled(NavMember)`
 
 
 function Nav() {
+    const userState = useSelector(state => state.user);
     const SubMenuHeight = (e) =>{
         //const [isHeight, setIsHeight] = useState();
         const list = document.querySelectorAll(".sub_list")[e];
@@ -319,14 +320,29 @@ function Nav() {
             </NavList>
             <NavMember>
                 <ul>
-                    <li><NavLink to="/login">
-                        <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> 로그인
+                    <li><NavLink to ={userState.data?.nickname ? "/logout" : "/login"}>
+                        <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> 
+                        {userState.data?.nickname ? "로그아웃" : "로그인"}
                         </NavLink>
                     </li>
                     <li><NavLink to="/member">
                         <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> 회원가입
                         </NavLink>
                     </li>
+                    {/* {
+                        userState.data?.nickname?
+                        <li>
+                            <NavLink to='/modify'>
+                                <FontAwesomeIcon icon={faUserPen}></FontAwesomeIcon> 정보수정
+                            </NavLink>
+                        </li>
+                        :
+                        <li>
+                            <NavLink to='/member'>
+                                <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> 회원가입
+                            </NavLink>
+                        </li>
+                    } */}
                 </ul>
             </NavMember>
         </NavWrap>
@@ -344,8 +360,9 @@ function Nav() {
         <Container $isopen={isActive}>
             <MsubmenuMember>
                 <ul>
-                    <li><NavLink to="/login">
-                        <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> 로그인
+                    <li><NavLink to= {userState.data?.nickname ? "/logout" : "/login"}>
+                        <FontAwesomeIcon icon={faLock}></FontAwesomeIcon>
+                        {userState.data?.nickname ? "로그아웃" : "로그인"}
                         </NavLink>
                     </li>
                     <li><NavLink to="/member">
@@ -354,28 +371,31 @@ function Nav() {
                     </li>
                 </ul>
             </MsubmenuMember>
-                <ul>
-                    {
-                        Nav.map((e,i)=>{
-                            return(
-                                <li key={i} onClick={()=>{
-                                    SubMenuHeight(i);
-                                    (isActive !== i ? setIsActive(i) : setIsActive(-1));
-                                }}>{e.title}
-                                    <Msubmenu className='sub_list' $isopen={isActive === i ? 'true' : 'false'} $height={isValue}>
-                                    {
-                                        SubData[e.link].map((el,index)=>{
-                                            return(
-                                                <li key={index}><NavLink to={el.link}>{el.title}</NavLink></li>
-                                            )
-                                        })
-                                    }  
-                                    </Msubmenu>
-                                </li>
-                            )
-                        })
-                    }
-                </ul>
+            {
+                Nav.map((e,i)=>{
+                    return(
+                        
+                      <ul key={i}>
+                        <li onClick={()=>{
+                            SubMenuHeight(i);
+                            (isActive !== i ? setIsActive(i) : setIsActive(-1));
+                        }}>{e.title}</li>
+                        
+                        <Msubmenu className='sub_list' $isopen={isActive === i ? "true" : "false"} $height={isValue}>
+                            {
+                                SubData[e.link].map((el,index)=>{
+                                    return(
+                                        <li key={index}>
+                                            <NavLink to={el.link}>{el.title}</NavLink>
+                                        </li>
+                                    )
+                                })
+                            }
+                        </Msubmenu>
+                      </ul>
+                    )
+                })
+            }
         </Container>
     </>
   )

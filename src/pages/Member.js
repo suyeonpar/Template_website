@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import Modal from '../components/Modal';
+import { useDispatch, useSelector } from 'react-redux';
+import { logIn } from '../store';
 
 const Container = styled.div`
   display: flex;
@@ -40,9 +42,9 @@ const Input = styled.input`
   border-radius: 5px;
   box-sizing: border-box;
   &:focus{
-    border-color: #007bff;
     outline: none;
   }
+  &::placeholder{opacity:0;}
 `
 const InputWrapper = styled.div`
   position: relative;
@@ -54,6 +56,16 @@ const InputWrapper = styled.div`
     font-size: 8px;
     color: #007bff;
   }
+`
+
+const Label = styled.label`
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  font-size: 14px;
+  color: #999;
+  transition: all 0.3s;
+  pointer-events: none;
 `
 
 const Button = styled.button`
@@ -86,6 +98,7 @@ const ModalBackground = styled.div`
   justify-content: center;
   align-items: center;
 `
+
 const ModalContent = styled.div`
   flex-basis: 360px;
   background-color: #fff;
@@ -112,11 +125,12 @@ function Member() {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [nickname, setNickname] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
   const [eye, setEye] = useState([0,0]);
   const [isModal, setIsModal] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const toggleEye = (index) =>{
     let newEye = [...eye];
@@ -133,7 +147,7 @@ function Member() {
     let value = e.target.value;
     e.target.value = e.target.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/-{1,2}$/g, "");
 
-    setPhone(value);
+    setPhoneNumber(value);
   }
 
   const errorMsg = (erorrCode) =>{
@@ -147,9 +161,9 @@ function Member() {
     return firebaseError[erorrCode] || '알 수 없는 에러가 발생하였습니다.'
   }
   // 폰번호 입력
-  const isValidPhone = (phone) =>{
+  const isValidPhone = (phoneNumber) =>{
     const regex = /^01[0-9]-[0-9]{3,4}-[0-9]{4}$/;
-    return regex.test(phone); //test = 정규식 코드에 일치하는 값이 있는지 확인 true false로 반환
+    return regex.test(phoneNumber); //test = 정규식 코드에 일치하는 값이 있는지 확인 true false로 반환
   }
   //이메일 입력
   const isValidEmail = (email) =>{
@@ -166,7 +180,7 @@ function Member() {
       errorMessage = "이름"  //이름을 체크했을때 한글자라도 없다면 에러메세지
     }else if(nickname.length === 0){
       errorMessage = "닉네임"
-    }else if(!isValidPhone(phone)){
+    }else if(!isValidPhone(phoneNumber)){
       setError("유효한 전화번호를 입력해주세요.");
       setIsModal(!isModal);
       return;
@@ -175,9 +189,13 @@ function Member() {
       setIsModal(!isModal);
       return;
     }else if(password.length === 0){
-      errorMessage = "비밀번호";
+      setError("비밀번호를 입력하세요.");
+      setIsModal(!isModal)
+      return;
     }else if(passwordConfirm.length === 0){
-      errorMessage = "비밀번호 확인";
+      setError("비밀번호를 확인해주세요.");
+      setIsModal(!isModal)
+      return;
     }else if(password !== passwordConfirm){
       setError("비밀번호가 일치하지 않습니다.");
       setIsModal(!isModal);
@@ -196,44 +214,71 @@ function Member() {
       const userProfile = {
         name,
         nickname,
-        phone
+        phoneNumber,
+        email
       }
       console.log(userProfile)
       await setDoc(doc(getFirestore(), "users", user.uid), userProfile)
 
-      alert("회원가입이 완료되었습니다.")
+      sessionStorage.setItem("users", user.uid)
+      dispatch(logIn(user.uid));
+
+      alert("회원가입이 완료되었습니다.");
       navigate('/'); //main화면으로 넘어간다
 
     }catch(error){
       setError(errorMsg(error.code));
       setIsModal(!isModal);
-      console.log(error);
+      console.log(error.code);
     }
   }
+
+  const userState = useSelector(state =>state.user);
 
   return (
     <>
     {isModal && 
-    <Modal error={error} setIsModal={setIsModal} isModal={isModal} /> 
+    <Modal error={error} onClose={()=>setIsModal(false)} /> 
     }
+    {
+    userState.loggedIn ? <Modal error="이미 로그인 중입니다." onClose={()=>navigate('/')}/> :
     <Container>
       <SignUp>
         <Title>회원가입</Title>
-        <Input defaultValue={name} onChange={(e)=>{setName(e.target.value)}} type='text' className='name' placeholder='이름' />
-        <Input defaultValue={nickname} onChange={(e)=>{setNickname(e.target.value)}} type='text' className='nickname' placeholder='닉네임' />
-        <Input type='text' className='phone' placeholder='전화번호' onInput={PhoneNumber} maxLength={13} />
-        <Input type='email' className='email' onChange={(e)=>{setEmail(e.target.value)}} placeholder='이메일' />
-        <Password>
-          <Input type={eye[0] ? 'text' : 'password'} className='password' onChange={(e)=>{setPassword(e.target.value)}} placeholder='비밀번호'/>
-          <FontAwesomeIcon icon={eye[0] ? faEye : faEyeSlash} onClick={()=> {toggleEye(0)}} />
+        <InputWrapper>
+          <Input Value={name} onChange={(e)=>{setName(e.target.value)}} type='text' className='name' placeholder='이름' />
+          <Label htmlFor=''>이름</Label>
+        </InputWrapper>
+        <InputWrapper>
+          <Input Value={nickname} onChange={(e)=>{setNickname(e.target.value)}} type='text' className='nickname' placeholder='닉네임' />
+          <Label htmlFor=''>닉네임</Label>
+        </InputWrapper>
+        <InputWrapper>
+          <Input type='text' className='phone' placeholder='전화번호' onInput={PhoneNumber} maxLength={13} />
+          <Label htmlFor=''>전화번호</Label>
+        </InputWrapper>
+        <InputWrapper>
+          <Input type='email' className='email' onChange={(e)=>{setEmail(e.target.value)}} placeholder='이메일' />
+          <Label htmlFor=''>이메일</Label>
+        </InputWrapper>
+        <InputWrapper>
+          <Password>
+            <Input type={eye[0] ? 'text' : 'password'} className='password' onChange={(e)=>{setPassword(e.target.value)}} placeholder='비밀번호'/>
+            <Label htmlFor=''>비밀번호</Label>
+            <FontAwesomeIcon icon={eye[0] ? faEye : faEyeSlash} onClick={()=> {toggleEye(0)}} />
         </Password>
-        <Password>
-          <Input type='password' onChange={(e)=>{setPasswordConfirm(e.target.value)}} className='confirm_password' placeholder='비밀번호 확인' />
-          <FontAwesomeIcon icon={faEyeSlash} />
+        </InputWrapper>
+        <InputWrapper>
+          <Password>
+            <Input type={eye[1] ? 'text' : 'password'} onChange={(e)=>{setPasswordConfirm(e.target.value)}} className='confirm_password' placeholder='비밀번호 확인' />
+            <Label htmlFor=''>비밀번호 확인</Label>
+            <FontAwesomeIcon icon={eye[1] ? faEye : faEyeSlash} onClick={()=> {toggleEye(1)}} />
+          </Password>
+        </InputWrapper>
         <Button onClick={signUp}>가입</Button>
-        </Password>
       </SignUp>
-    </Container>
+      </Container>
+      }
     </>
   )
 }

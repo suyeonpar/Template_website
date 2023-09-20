@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { firebaseAuth, signInWithEmailAndPassword } from '../firebase'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useHistory, NavLink } from 'react-router-dom'
+import { collection, doc, getDoc, getFirestore } from 'firebase/firestore'
+import { useDispatch } from 'react-redux';
+import { logIn, loggedln } from '../store'
 
 const Container = styled.div`
   display: flex;
@@ -48,6 +51,24 @@ const Input = styled.input`
 const InputWrapper = styled.div`
   position: relative;
   margin-bottom: 20px;
+  &:last-child{
+    margin-bottom: 0;
+    margin-top: 20px;
+    justify-content: flex-end;
+    display: flex;
+    column-gap: 20px;
+    a{
+      background-color: #40e0d0;
+      font-size: 14px;
+      text-align: center;
+      padding: 5px 20px;
+      border-radius: 5px;
+      color: #fff;
+      &:last-child{
+        background-color: #036;
+      }
+    }
+  }
   input:focus + label,
   input:not(:placeholder-shown) + label{
     top: 4px;
@@ -80,6 +101,7 @@ function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [error, setError] = useState();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   //console.log(navigate);
   const errorMsg = (errorCode) =>{
@@ -100,29 +122,48 @@ function Login() {
       //console.log(userLogin)
       const user = userLogin.user
       //console.log(user) // user정보만 콘솔에 뜬다
+      sessionStorage.setItem("users", user.uid)
+      dispatch(logIn(user.uid))
+
+      const userDoc = doc(collection(getFirestore(),"users"), user.uid);
+      //user 안에서 uid 값을 가지고 오겠다.
+      const userDocSnapshot = await getDoc(userDoc);
+      console.log(userDocSnapshot.data());
+
+      if(userDocSnapshot.exists()){
+        const userData = userDocSnapshot.data();
+        dispatch(loggedln(userData))
+
+        //로그인 성공 시 뒤로 보내기
+        navigate(-1);
+      }
     }catch(error){//오류가 있다면 catch를 실행해주세요
       setError(errorMsg(error.code));
-      //console.log(error.code)
+      console.log(error.code)
     }
   }
+  console.log(navigate);
 
   return (
     <>
     <Container>
       <SignUp>
         <Title>로그인</Title>
-        {email} {password}
         <form onSubmit={LoginForm}>
           <InputWrapper>
-            <Input type='email' className='email' placeholder='이메일' onChange={(e)=>{setEmail(e.target.value)}} />
-            <Lable>이메일</Lable>
+            <Input type='email' className='email' placeholder='이메일' onChange={(e)=>{setEmail(e.target.value)}} required />
+            <Lable htmlFor=''>이메일</Lable>
           </InputWrapper>
           <InputWrapper>
-            <Input type='password' className='password' placeholder='비밀번호' onChange={(e)=>{setPassword(e.target.value)}} />
-            <Lable>비밀번호</Lable>
+            <Input type='password' className='password' placeholder='비밀번호' onChange={(e)=>{setPassword(e.target.value)}} required />
+            <Lable htmlFor=''>비밀번호</Lable>
           </InputWrapper>
           <Button>로그인</Button>
         </form>
+        <InputWrapper>
+          <NavLink to="/findemail">이메일 / 비밀번호 재설정</NavLink>
+          <NavLink to="/member">회원가입</NavLink>
+        </InputWrapper>
         <p>{error}</p>
       </SignUp>
     </Container>

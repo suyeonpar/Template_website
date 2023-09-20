@@ -46,7 +46,7 @@ const Button = styled.button`
 `
 
 
-function Modal({error, isModal, setIsModal}) {
+function Modal({error, onClose}) {
 
   return (
     <>
@@ -54,7 +54,8 @@ function Modal({error, isModal, setIsModal}) {
       <ModalContent>
         <FontAwesomeIcon icon={faTriangleExclamation} />
         <p>{error}</p>
-        <Button onClick={()=>{setIsModal(!isModal)}}>확인</Button>
+        {/* <Button onClick={()=>{setIsModal(!isModal)}}>확인</Button> */}
+        <Button onClick={onClose}>확인</Button>
       </ModalContent>
     </ModalBackground>
     </>
