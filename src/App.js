@@ -16,6 +16,7 @@ import { collection, doc, getDoc, getFirestore } from "firebase/firestore";
 import Logout from "./pages/Logout";
 import Modify from "./pages/Modify";
 import Findemail from "./pages/Findemail";
+import Write from "./pages/Write";
 
 
 function App() {
@@ -115,6 +116,7 @@ function Inner(){
         <Route path="/logout" element={<Logout />}></Route>
         <Route path="/modify" element={<Modify />}></Route>
         <Route path="/findemail" element={<Findemail />}></Route>
+        <Route path="/write" element={<Write />}></Route>
       </Routes>
     </ThemeProvider>
     </>
