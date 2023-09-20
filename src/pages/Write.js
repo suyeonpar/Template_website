@@ -1,8 +1,10 @@
-import React, { useRef } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImage } from '@fortawesome/free-solid-svg-icons';
+import React from 'react'
 import styled from 'styled-components';
 import Ckeditor from '../components/Ckeditor';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Modal from '../components/Modal';
+import { useSelector } from 'react-redux';
 
 
 
@@ -90,63 +92,60 @@ const ContentLabel = styled.p`
   margin-bottom: 15px;
 `;
 
-const ContentInput = styled.input`
-  background-color: #2ed090;
-  margin-left: 13px;
-  color: white;
-  border-radius: 2px;
-  padding: 2px;
-  font-size: 13px;
-`;
-
-const InputLabel = styled.label`
-    
-`
-
-
-
-
-const TextArea = styled.textarea`
-  width: 85%;
-  border: 1px solid #e5e7eb;
-  padding-bottom: 600px; /* You might want to adjust this value */
-  padding-top: 2px;
-  padding-left: 4px;
-`;
 
 function Write() {
 
-  const FileUploader = () => {
-    const fileRef = useRef<HTMLInputElement>(null);
-    // input click method
-    const handleClick = () => {
-      fileRef?.current?.click();
-    }
+  const [txtTitle, setTxtTitle] = useState("");
+  const {board} = useParams();
+  // alert(board)
+  const [isModal, setIsModal] = useState(true);
+  const navigate = useNavigate();
+  const boards = ["notice", "online", "qna", "gallery"];
+  const memberProfile = useSelector(state => state.user);
+  console.log(memberProfile)
 
+
+  if(!memberProfile.loggedIn){
+    return(
+      <>
+      {
+        isModal && <Modal error = '로그인 이후 이용해주시길바랍니다.' onClose={()=>{setIsModal(false); navigate('/login')}} />
+      }
+      </>
+    )
   }
-  
 
+  if(!boards.includes(board)){
+    return(
+      <>
+      {
+        isModal && <Modal error = '잘못된 게시판입니다.' onClose={()=>{setIsModal(false); navigate('/')}} />
+      }
+      </>
+    )
+  }
 
   return (
+    <>
     <Container>
       <InnerContainer>
         <Header>
           <Heading>글쓰기</Heading>
           <UploadButton>등록하기</UploadButton>
         </Header>
-
         <ContentWrapper>
           <ContentInner>
             <Title>제목</Title>
-            <TextInput type="text" />
+            <TextInput type="text" onChange={(e)=>{setTxtTitle(e.target.value)}} />
           </ContentInner>
           <ContentInputWrapper>
             <ContentLabel>내용</ContentLabel>
-            <Ckeditor/>
+            <Ckeditor title={txtTitle}/>
           </ContentInputWrapper>
         </ContentWrapper>
       </InnerContainer>
     </Container>
+    </>
   );
 }
 

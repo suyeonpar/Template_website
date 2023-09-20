@@ -25,7 +25,6 @@ const ASide = styled.div`
 
 function Aside() {
     const theme = useSelector(state => state.dark);
-    console.log(theme)
     const dispatch = useDispatch();
 
     return (

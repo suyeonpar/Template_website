@@ -4,7 +4,7 @@ import { firebaseAuth, signInWithEmailAndPassword } from '../firebase'
 import { useNavigate, useHistory, NavLink } from 'react-router-dom'
 import { collection, doc, getDoc, getFirestore } from 'firebase/firestore'
 import { useDispatch } from 'react-redux';
-import { logIn, loggedln } from '../store'
+import { logIn, loggedIn } from '../store'
 
 const Container = styled.div`
   display: flex;
@@ -132,7 +132,7 @@ function Login() {
 
       if(userDocSnapshot.exists()){
         const userData = userDocSnapshot.data();
-        dispatch(loggedln(userData))
+        dispatch(loggedIn(userData))
 
         //로그인 성공 시 뒤로 보내기
         navigate(-1);

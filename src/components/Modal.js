@@ -27,7 +27,7 @@ const ModalContent = styled.div`
   >svg{
     flex-basis: 100%;
     font-size: 80px;
-    color: red;
+    color: orange;
   }
   >p{
     font-size: 16px;

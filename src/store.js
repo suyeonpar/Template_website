@@ -4,21 +4,21 @@ import { configureStore, createSlice } from "@reduxjs/toolkit";
 let user = createSlice({
     name: "user", //변수명이랑 똑같이 적어주면 덜 헷갈림
     initialState: {
-        loggedln : false,
+        loggedIn : false,
         data : null,
         uid : null
     }, //state 기본값
     reducers: {
         logIn : (state, action) => {
-            state.loggedln = true;
+            state.loggedIn = true;
             state.uid = action.payload;
         },
-        loggedln: (state, action)=>{
-            state.loggedln = true;
+        loggedIn: (state, action)=>{
+            state.loggedIn = true;
             state.data = action.payload;
         },
         logOut : (state) =>{
-            state.loggedln = false;
+            state.loggedIn = false;
             state.data = null;
             state.uid = null;
         }
@@ -43,15 +43,14 @@ let dark = createSlice({
     }
 })
 
-export const {logIn,loggedln,logOut} = user.actions;
-export const {changeName} = user.actions;
+export const {logIn,loggedIn,logOut} = user.actions;
+
 export const {ToggleTheme} = dark.actions;
 export const {} = dark.actions;
 
 export default configureStore({
     reducer: {
         user : user.reducer,
-        dark : dark.reducer,
         dark : dark.reducer
     }
 }) //항상 정보를 가지고있어야하는 데이터를 쓸때 예) 로그인, 장바구니 
