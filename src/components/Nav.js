@@ -103,7 +103,7 @@ const Hamburger = styled.div`
     &.on div:nth-child(2){opacity: 0; transform: translateX(-30px) rotate(720deg);}
     &.on div:nth-child(3){transform: rotate(-45deg) translateY(-12px);}
     @media screen and (min-width: 1024px){display: none;}
-    @media screen and (max-width: 768px){right: 24px;}
+    @media screen and (max-width: 768px){right: 0px;}
 `
 const Container = styled.div`
     width: 320px;
@@ -374,7 +374,6 @@ function Nav() {
             {
                 Nav.map((e,i)=>{
                     return(
-                        
                       <ul key={i}>
                         <li onClick={()=>{
                             SubMenuHeight(i);

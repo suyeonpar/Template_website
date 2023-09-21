@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import styled from 'styled-components';
-import { addDoc, collection, getFirestore, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, getFirestore, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { faList, faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Modal from './Modal';
+import { useEffect } from 'react';
 
 const ButtonWrap = styled.div`
     display: flex;
@@ -34,14 +35,21 @@ const Button = styled.button`
     svg{margin-right: 12px}
 `
 
-function Ckeditor({title}) {
+function Ckeditor({title, postData}) {
     const memberProfile = useSelector(state => state.user);
     const [isModal, setIsModal] = useState(false);
     const navigate = useNavigate();
-    const {board} = useParams();
+    const {board, view} = useParams();
     const [writeData, setWriteData] = useState("");
     console.log(memberProfile)
     const [message, setMessage] = useState();
+
+    useEffect(()=>{
+        if(postData){
+            setWriteData(postData.content);
+        }
+    },[postData])
+
     const dataSubmit = async () =>{
         if(title.length === 0){
             setIsModal(!isModal);
@@ -53,17 +61,26 @@ function Ckeditor({title}) {
             return;
         }
         try{
-            await addDoc(collection(getFirestore(), board),{
-                title : title,
-                content : writeData,
-                view : 1,
-                uid : memberProfile.uid,
-                name: memberProfile.data.name,
-                email: memberProfile.data.email,
-                nickname: memberProfile.data.nickname,
-                timestamp: serverTimestamp()
-            })
-            alert("게시글이 성공적으로 등록되었습니다.");
+            if(board && view){
+                const postRef = doc(getFirestore(), board, view);
+                await updateDoc(postRef, {
+                    title: title,
+                    content: writeData
+                })
+                alert("내용이 수정되었습니다.") // 글 수정할수 있는 함수
+            }else{
+                await addDoc(collection(getFirestore(), board),{
+                    title : title,
+                    content : writeData,
+                    view : 1,
+                    uid : memberProfile.uid,
+                    name: memberProfile.data.name,
+                    email: memberProfile.data.email,
+                    nickname: memberProfile.data.nickname,
+                    timestamp: serverTimestamp()
+                })
+                alert("게시글이 성공적으로 등록되었습니다.");
+            }
             navigate(`/service/${board}`)
         }catch(error){
             setIsModal(!isModal);
@@ -100,7 +117,7 @@ function Ckeditor({title}) {
     />
         <ButtonWrap>
             <Button onClick={dataSubmit}><FontAwesomeIcon icon={faPen} />완료</Button>
-            <Button><FontAwesomeIcon icon={faList} />목록<Link to="/service/notice"></Link></Button>
+            <Button><FontAwesomeIcon icon={faList} /><Link to="/service/notice">목록</Link></Button>
         </ButtonWrap>
     </>
   )

@@ -24,6 +24,7 @@ import Qna from "./pages/service/Qna";
 import Gallery from "./pages/service/Gallery";
 import View from "./pages/View";
 import { useState } from "react";
+import Notpage from "./pages/Notpage";
 
 
 function App() {
@@ -82,13 +83,12 @@ function Inner(){
   const DarkMode = theme === 'light' ? light : dark;
   const dispatch = useDispatch();
   const uid = sessionStorage.getItem("users");
-  console.log(uid)
-  if(uid){
-    dispatch(logIn(uid));
-  }
+  //console.log(uid)
 
   useEffect(()=>{
-
+    if(uid){
+      dispatch(logIn(uid)); //완전히 로딩되고 난 후 작성
+    }
     const fetchUser = async () =>{
       if(!uid) return;
       const userDoc = doc(collection(getFirestore(),"users"), uid);
@@ -104,14 +104,32 @@ function Inner(){
       }
     }
     fetchUser();
-  },[dispatch, uid])
+  })
+  
+  // useEffect(()=>{
+  //   const fetchUser = async () =>{
+  //     if(!uid) return;
+  //     const userDoc = doc(collection(getFirestore(),"users"), uid);
+  //     try{
+  //       const docSnapshot = await getDoc(userDoc);
+  //       console.log(docSnapshot.exists())
+  //       if(docSnapshot.exists()){
+  //         const userData = docSnapshot.data();
+  //         dispatch(loggedIn(userData))
+  //       }
+  //     }catch(error){
+  //       console.log(error)
+  //     }
+  //   }
+  //   fetchUser();
+  // },[dispatch, uid])
   
   const [isModal, setIsModal] = useState(true);
   const navigate = useNavigate();
 
   return(
     <>
-    <ThemeProvider theme={DarkMode}>
+    <ThemeProvider theme={DarkMode}>  
       <GlobalStyle />
       <Aside />
       <Nav />
@@ -125,13 +143,15 @@ function Inner(){
         <Route path="/findemail" element={<Findemail />}></Route>
         <Route path="/write/:board" element={<Write />}></Route>
         <Route path="/view/:board/:view" element={<View />}></Route>
-        <Route path="/view/:board" element={isModal && <Modal error="유효하지 않은 경로입니다." onClose={()=>{Navigate('/')}} />}></Route>
+        <Route path="/view/:board" element={isModal && <Modal error="유효하지 않은 경로입니다." onClose={()=>{navigate('/')}} />}></Route>
+        <Route path="/edit/:board/:view" element={<Write />}></Route>
         <Route path="/service" element={<Service />}>
           <Route path="notice" element={<Notice />}></Route>
           <Route path="online" element={<Online />}></Route>
           <Route path="qna" element={<Qna />}></Route>
           <Route path="gallery" element={<Gallery />}></Route>
         </Route>
+        <Route path="/*" element={<Notpage />}></Route>
       </Routes>
     </ThemeProvider>
     </>

@@ -51,22 +51,23 @@ const Input = styled.input`
 const InputWrapper = styled.div`
   position: relative;
   margin-bottom: 20px;
+  justify-content: flex-end;
+  display: flex;
   &:last-child{
-    margin-bottom: 0;
-    margin-top: 20px;
-    justify-content: flex-end;
-    display: flex;
+    margin-bottom: 10px;
     column-gap: 20px;
-    a{
-      background-color: #40e0d0;
-      font-size: 14px;
-      text-align: center;
-      padding: 5px 20px;
-      border-radius: 5px;
-      color: #fff;
-      &:last-child{
-        background-color: #036;
-      }
+    }
+  a{
+    margin-top: 20px;
+    background-color: #40e0d0;
+    font-size: 14px;
+    text-align: center;
+    padding: 5px 20px;
+    border-radius: 5px;
+    color: #fff;
+    &:last-child{
+      background-color: #036;
+      margin-left: 10px;
     }
   }
   input:focus + label,
@@ -76,6 +77,7 @@ const InputWrapper = styled.div`
     font-size: 8px;
     color: #007bff;
   }
+
 `
 const Lable = styled.label`
   position: absolute;

@@ -106,7 +106,7 @@ function Notice() {
        })
       }
       <ButtonWrap>
-        <Button><Link to="/write/notice"><FontAwesomeIcon icon={faPen} />글쓰기</Link></Button>
+      <Link to="/write/notice"><Button><FontAwesomeIcon icon={faPen} />글쓰기</Button></Link>
       </ButtonWrap>
     </BoardWrapper>
     </>

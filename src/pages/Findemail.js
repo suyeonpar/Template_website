@@ -18,7 +18,7 @@ const FindMail = styled.div`
   width: 35vw;
   padding: 20px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  background-color: #fff;
+  background-color: #fff; 
   border-radius: 10px;
   @media screen and (max-width: 1024px) {
     width: 60vw;
