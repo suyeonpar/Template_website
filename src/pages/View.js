@@ -122,7 +122,7 @@ function View() {
     return(
       <div>로딩중</div>
     )
-  }
+  } // post가 없다면 로딩중이 뜬다
 
   return (
     <>
