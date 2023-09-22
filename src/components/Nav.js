@@ -54,7 +54,7 @@ const StyledIcon = styled(FontAwesomeIcon)`
 
 const NavSubmenu = styled.ul`
     position: absolute;
-    background-color: ㅊ;
+    background-color: #aeb7dd;
     transition: 0.5s;
     flex-wrap: wrap;
     text-align: center;
@@ -357,19 +357,19 @@ function Nav() {
     <Container $isopen={isActive2}>
         <MsubmenuMember>
         <ul>
-                <li>
-                    <NavLink to="/login">
-                        <FontAwesomeIcon icon={faLock}></FontAwesomeIcon>
-                        로그인
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/member">
-                        <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-                        회원가입
-                    </NavLink>
-                </li>
-            </ul>
+            <li>
+                <NavLink to="/login">
+                    <FontAwesomeIcon icon={faLock}></FontAwesomeIcon>
+                    로그인
+                </NavLink>
+            </li>
+            <li>
+                <NavLink to="/member">
+                    <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                    회원가입
+                </NavLink>
+            </li>
+        </ul>
         </MsubmenuMember>
             <ul>
             {
