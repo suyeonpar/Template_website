@@ -24,15 +24,13 @@ function Logout() {
   return (
     <>
      {
-     
-        isModal &&
-             <Modal error="로그아웃을 하시겠습니까?" onClose={()=>{
-                setIsModal(false);
-                navigate("/")
-             }}/>
-        
-        }
-        {/* 다른 컴포넌트는 onClick 안 됨 */}
+      isModal &&
+        <Modal error="로그아웃을 하시겠습니까?" onClose={()=>{
+           setIsModal(false);
+           navigate("/")
+        }}/>
+      }
+      {/* 다른 컴포넌트는 onClick 안 됨 */}
     </>
   )
 }

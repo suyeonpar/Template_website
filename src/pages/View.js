@@ -3,10 +3,11 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import Modal from '../components/Modal';
-import { deleteDoc, doc, getDoc, getFirestore, increment, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDoc, getFirestore, increment, onSnapshot, orderBy, query, serverTimestamp, updateDoc } from 'firebase/firestore';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faPen, faPenSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
 
 
 const Container = styled.div`
@@ -64,15 +65,40 @@ const Button = styled.button`
     a{color: #fff;}
     svg{margin-right: 12px}
 `
+const CommentWrap = styled.div`
+`
+const Comment = styled.div`
+`
 
 function View() {
-
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState("");
   const {board, view} = useParams();
   const [isModal, setIsModal] = useState(false);
   const navigate = useNavigate();
   const boards = ["notice", "online", "qna", "gallery"];
+  const userState = useSelector(state => state.user)
   const [post, setPost] = useState();
   const [message, setMessage] = useState("");
+
+  const uid = sessionStorage.getItem("users");
+  const [userUid, setUserUid] = useState(uid)
+  
+  useEffect(()=>{
+    const postRef = doc(getFirestore(), board, view);
+    const commentRef = collection(postRef, "comments");
+
+    const q = query(commentRef, orderBy("timestamp", "desc"));
+
+    const dataSnap =  onSnapshot(q, (item)=>{
+      const fetchComment = item.docs.map(doc =>({
+        id: doc.id,
+        ...doc.data()
+      }))
+      setComments(fetchComment);
+    })
+    return dataSnap;
+  },[board, view])
 
   const viewCnt = async(board, view) =>{
     const viewRef = doc(getFirestore(), board, view);
@@ -88,6 +114,7 @@ function View() {
         if(postSnapShot.exists()){
           setPost(postSnapShot.data())
           viewCnt(board, view);
+          setUserUid(postSnapShot.data().uid);
         }else{
           setIsModal(true);
           setMessage("해당 문서가 존재하지 않습니다.")
@@ -95,6 +122,27 @@ function View() {
       }
       fetchData();
   },[board, view])
+
+  const addComment = (view) =>{
+    const postRef = doc(getFirestore(), board, view);
+    const commentRef = collection(postRef, "comments");
+    addDoc(commentRef, {
+      text: comment,
+      nickname: userState&&userState.data.nickname,
+      timestamp: serverTimestamp() //현재시간 (제공하는 기능)
+    })
+  }
+
+  function formatDate(data){
+    if(data){
+      const date = data.toDate();
+      const year = date.getFullYear();
+      const month = String(date.getMonth() +1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`
+    }
+  } //댓글을 쓴 년도, 날짜, 시간을 보여주는 함수
+
 
   const deletePost = async () =>{
     if(window.confirm("정말로 삭제하시겠습니까?")){
@@ -137,15 +185,37 @@ function View() {
           </div>
         </Content>
         <div dangerouslySetInnerHTML={{__html: post.content}} />
+        <CommentWrap>
+          <ul>
+            {
+              comments.map((e,i)=>{
+                return(
+                  <li key={i}>{e.text} <span>{formatDate(e.timestamp)}</span></li>
+                )
+              })
+            }
+          </ul>
+          {
+            uid &&
+          <Comment>
+            <textarea value={comment} onChange={(e)=>{setComment(e.target.value)}}></textarea>
+            <Button onClick={()=>{addComment(view)}}>댓글달기</Button>
+          </Comment>
+          }
+        </CommentWrap>
+
         <ButtonContent>
           <ButtonWrap>
             <Button onClick={()=>{navigate(`/service/${board}`)}}><FontAwesomeIcon icon={faList} /> 목록</Button>
             <Button onClick={()=>{navigate(`/write/${board}`)}}><FontAwesomeIcon icon={faPen} /> 글쓰기</Button>
           </ButtonWrap>
+          {
+            uid && uid === userUid &&
           <ButtonWrap>
             <Button onClick={()=>{navigate(`/edit/${board}/${view}`)}}><FontAwesomeIcon icon={faPenSquare} /> 수정</Button>
             <Button onClick={deletePost}><FontAwesomeIcon icon={faTrash} /> 삭제</Button>
-          </ButtonWrap>
+          </ButtonWrap> //uid 즉 로그인했을때 수정, 삭제 버튼이 뜬다. 로그인한 계정으로 작성한 게시물만 수정, 삭제 할 수 있다
+          }
         </ButtonContent>
       </ConteneWrap>
     </Container>

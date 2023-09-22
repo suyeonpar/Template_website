@@ -1,4 +1,4 @@
-import { faArrowRightFromBracket, faLock, faUser, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRightFromBracket, faLock, faUser, faChevronDown, faUserPen } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
@@ -54,7 +54,7 @@ const StyledIcon = styled(FontAwesomeIcon)`
 
 const NavSubmenu = styled.ul`
     position: absolute;
-    background-color: rgb(30,41,59);
+    background-color: ㅊ;
     transition: 0.5s;
     flex-wrap: wrap;
     text-align: center;
@@ -160,122 +160,119 @@ const MsubmenuMember = styled(NavMember)`
 
 
 function Nav() {
-    const userState = useSelector(state => state.user);
-    const SubMenuHeight = (e) =>{
-        //const [isHeight, setIsHeight] = useState();
+
+    const userState = useSelector(state =>state.user);
+    const [isHeight, setisHeight] = useState();
+    const SubMenuHeight = (e)=>{
         const list = document.querySelectorAll(".sub_list")[e];
-        //console.log(list);
+        // console.log(list);
         const listLength = list.querySelectorAll("li").length;
-        //console.log(listLength);
         const value = listLength * 43+"px";
-        //console.log(value);
-        
-        return setIsValue(value);
+        // console.log(value);
+
+        return setisHeight(value);
+
     }
+
     const [isActive, setIsActive] = useState(-1);
-    const [isValue, setIsValue] = useState();
+    const [isActive2, setIsActive2] = useState(false);
     const SubData = {
-        company: [
+        company:[
             {
                 title: "인사말",
-                link: "/company/greentings" 
+                link : "/company/greeting"
             },
             {
                 title: "연혁",
-                link: "/company/history"
+                link : "/company/history"
             },
             {
                 title: "내부전경",
-                link: "/company/interior"
+                link : "/company/interior"
             },
             {
                 title: "오시는길",
-                link: "/company/directions"
+                link : "/company/directions"
             }
         ],
-        business: [
+        businss: [
             {
                 title: "사업소개",
-                link: "/business/business-1"
+                link : "/businss/businss-1"
             },
             {
                 title: "사업소개2",
-                link: "/business/business-2"
+                link : "/businss/businss-2"
             },
             {
                 title: "사업소개3",
-                link: "/business/business-3"
+                link : "/businss/businss-3"
             }
         ],
         product: [
             {
                 title: "제품소개",
-                link: "/product/product-1"
+                link : "/product-1"
             },
             {
                 title: "제품소개2",
-                link: "/product/product-2"
+                link : "/product-2"
             },
             {
                 title: "제품소개3",
-                link: "/product/product-3"
-            }
+                link : "/product-3"
+            },
         ],
         service: [
             {
                 title: "공지사항",
-                link: "/service/notice"
+                link : "/service/notice"
             },
             {
                 title: "온라인 상담",
-                link: "/service/online"
+                link : "/service/online"
             },
             {
-                title: "질문과답변",
-                link: "/service/qna"
+                title: "질문과 답변",
+                link : "/service/qna"
             },
             {
                 title: "갤러리",
-                link: "/service/gallery"
-            }
-        ]
+                link : "/service/gallery"
+            },
+        ],
     }
-    //변수명["문자열"][0].title
-    // const SubMenu = [
-    //     ["인사말", "연혁", "내부전경", "오시는길"],
-    //     ["사업소개", "사업소개2", "사업소개3"],
-    //     ["제품소개", "제품소개2", "제품소개3"],
-    //     ["공지사항", "온라인 상담", "질문과답변", "갤러리"]
-    // ]
-    // const SubMenuLink = [
-    //     ["/company/greentings", "/company/history", "/company/interior", "/company/directions"],
-    //     ["/business/business-1", "/business/business-2", "/business/business-3"],
-    //     ["/product/product-1", "/product/product-2", "/product/product-3"],
-    //     ["/service/notice", "/service/online", "/service/qna", "/service/gallery"]
+    //변수명['company'][0].title
+
+
+
+    // const Nav = [
+    //     ["회사소개", "사업소개", "제품소개", "고객센터"],
+    //     ["/company","/businss","/product","/service"]
     // ]
 
-    const Nav = [
+    const Nav =[
         {
             title: "회사소개",
-            link: "company"
+            link : "company"
         },
         {
             title: "사업소개",
-            link: "business"
+            link : "businss"
         },
         {
             title: "제품소개",
-            link: "product"
+            link : "product"
         },
         {
             title: "고객센터",
-            link: "service"
+            link : "service"
         }
     ]
-    // SubMenu[i].map((e,index)=>{return(console.log(e,index))})
 
   return (
     <>
+
     <NavContent>
         <NavWrap>
             <NavLogo>
@@ -285,117 +282,118 @@ function Nav() {
             </NavLogo>
             <NavList>
                 <ul>
-                    {   //배열을 2개 넣어줬기때문에 0번만 출력하기위해 0을 적어줌
-                        // Nav[0].map((e,i)=>{
-                        //     return(
-                        //         <li key={i}><NavLink to={Nav[1][i]}>{e}</NavLink></li>
-                        //     )
-                        // })
-
-                        //권장코드
-                        Nav.map((e,i)=>{
-                            return(
-                                <li key={i}
-                                onMouseOver={()=>{
-                                    setIsActive(i);
-                                    SubMenuHeight(i);
-                                }} 
+                {
+                    // Nav[0].map((e,i)=>{
+                    //     return (
+                    //         <li><NavLink to={Nav[1][i]}>{e}</NavLink></li>
+                    //     )
+                    // })
+                    Nav.map((e,i)=>{
+                        return (
+                            <li onMouseOver={()=>{
+                                setIsActive(i);
+                                SubMenuHeight(i);
+                            }} 
                                 onMouseOut={()=>{
-                                    setIsActive(-1);
-                                }}><NavLink to={`/${e.link}`}>{e.title}</NavLink> <StyledIcon icon={faChevronDown} $isopen={isActive === i ? 'true' : 'false'} />
-                                    <NavSubmenu className={`sub_list`} $isopen={isActive === i ? "true" : "false"} $height={isValue}>
-                                        {
-                                            SubData[e.link].map((el, index)=>{
-                                                return(
-                                                    <li key={index}><NavLink to={el.link}>{el.title}</NavLink></li>
-                                                )
-                                            })
-                                        }
-                                    </NavSubmenu>
-                                </li>
-                            )
-                        })
-                    }
+                                setIsActive(-1);
+                            }} key={i}><NavLink to={`/${e.link}`}>{e.title}</NavLink> <StyledIcon icon={faChevronDown} $isopen={isActive === i ? "true" : "false"}/>
+                            <NavSubmenu className={`sub_list`} $isopen={isActive === i ? "true" : "false"} $height={isHeight}>
+                                {
+                                    SubData[e.link].map((el,index)=>{
+                                        return (
+                                            <li key={index}><NavLink to={el.link}>{el.title}</NavLink></li>
+                                        )
+                                    })
+                                }
+                            </NavSubmenu>
+                            </li>
+                        )
+                    })
+                }
                 </ul>
             </NavList>
             <NavMember>
-                <ul>
-                    <li><NavLink to ={userState.data?.nickname ? "/logout" : "/login"}>
+            <ul>
+                <li>
+                    <NavLink to={userState.data?.nickname ? "/logout"  : "/login"}>
                         <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> 
                         {userState.data?.nickname ? "로그아웃" : "로그인"}
-                        </NavLink>
-                    </li>
-                    <li><NavLink to="/member">
-                        <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> 회원가입
-                        </NavLink>
-                    </li>
-                    {/* {
-                        userState.data?.nickname?
-                        <li>
-                            <NavLink to='/modify'>
-                                <FontAwesomeIcon icon={faUserPen}></FontAwesomeIcon> 정보수정
-                            </NavLink>
-                        </li>
-                        :
-                        <li>
-                            <NavLink to='/member'>
-                                <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> 회원가입
-                            </NavLink>
-                        </li>
-                    } */}
-                </ul>
+                     
+                    </NavLink>
+                </li>
+               {
+                userState.data?.nickname ? 
+                <li>
+                    <NavLink to="/modify">
+                        <FontAwesomeIcon icon={faUserPen}></FontAwesomeIcon>
+                        정보수정
+                    </NavLink>
+                </li>
+                :
+                <li>
+                    <NavLink to="/member">
+                        <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                        회원가입
+                    </NavLink>
+                </li>
+               }
+            </ul>
             </NavMember>
         </NavWrap>
     </NavContent>
     {/* 모바일네비 */}
-        <Hamburger onClick={()=>{setIsActive(!isActive)}} className={isActive && 'on'}>
-            { //어떠한 데이터 없이 반복문 돌릴때 _ > i만 필요할때 쓴다 e를 쓸필요는 없음
-                Array(3).fill().map((_,i)=>{
-                    return(
-                        <div key={i}></div>
-                    )
-                })
-            }
-        </Hamburger>
-        <Container $isopen={isActive}>
-            <MsubmenuMember>
-                <ul>
-                    <li><NavLink to= {userState.data?.nickname ? "/logout" : "/login"}>
+    {/* <Hamburger className={isActive === true ? 'on' : ''} onClick={()=> setIsActive( isActive === false ? true : false)} > */}
+
+    <Hamburger onClick={()=> {setIsActive2(!isActive2)}} className={isActive2 && 'on'}>
+        {
+            Array(3).fill().map((_,i)=>{
+                return (
+                    <div key={i}></div>
+                )
+            })            
+        }
+    </Hamburger>   
+    {/* 모바일네비 */}
+    <Container $isopen={isActive2}>
+        <MsubmenuMember>
+        <ul>
+                <li>
+                    <NavLink to="/login">
                         <FontAwesomeIcon icon={faLock}></FontAwesomeIcon>
-                        {userState.data?.nickname ? "로그아웃" : "로그인"}
-                        </NavLink>
-                    </li>
-                    <li><NavLink to="/member">
-                        <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> 회원가입
-                        </NavLink>
-                    </li>
-                </ul>
-            </MsubmenuMember>
+                        로그인
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/member">
+                        <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                        회원가입
+                    </NavLink>
+                </li>
+            </ul>
+        </MsubmenuMember>
+            <ul>
             {
                 Nav.map((e,i)=>{
-                    return(
-                      <ul key={i}>
-                        <li onClick={()=>{
+                    return (
+                        <li key={i} onClick={()=>{
                             SubMenuHeight(i);
                             (isActive !== i ? setIsActive(i) : setIsActive(-1));
-                        }}>{e.title}</li>
-                        
-                        <Msubmenu className='sub_list' $isopen={isActive === i ? "true" : "false"} $height={isValue}>
-                            {
-                                SubData[e.link].map((el,index)=>{
-                                    return(
-                                        <li key={index}>
-                                            <NavLink to={el.link}>{el.title}</NavLink>
-                                        </li>
-                                    )
-                                })
-                            }
+                        }}>{e.title}
+                        <Msubmenu className='sud_list' $isopen={isActive === i ? "true" : "false"} $height={isHeight}>
+                        {
+                            SubData[e.link].map((el,index)=>{
+                                return (
+                                    <li key={index}><NavLink to={el.link}>{el.title}</NavLink></li>
+                                )
+                            })
+                        }
                         </Msubmenu>
-                      </ul>
+                        </li>
                     )
                 })
             }
-        </Container>
+            </ul>
+    </Container>
     </>
   )
 }

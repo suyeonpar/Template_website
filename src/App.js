@@ -81,7 +81,9 @@ function Inner(){
   
   const theme = useSelector(state => state.dark);
   const DarkMode = theme === 'light' ? light : dark;
+  
   const dispatch = useDispatch();
+  const userState = useSelector(state => state.user)
   const uid = sessionStorage.getItem("users");
   //console.log(uid)
 
@@ -94,7 +96,7 @@ function Inner(){
       const userDoc = doc(collection(getFirestore(),"users"), uid);
       try{
         const docSnapshot = await getDoc(userDoc);
-        console.log(docSnapshot.exists())
+        // console.log(docSnapshot.exists())
         if(docSnapshot.exists()){
           const userData = docSnapshot.data();
           dispatch(loggedIn(userData))
@@ -139,7 +141,7 @@ function Inner(){
         <Route path="/member" element={<Member/>}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/logout" element={<Logout />}></Route>
-        <Route path="/modify" element={<Modify />}></Route>
+        <Route path="/modify" element={<Member />}></Route>
         <Route path="/findemail" element={<Findemail />}></Route>
         <Route path="/write/:board" element={<Write />}></Route>
         <Route path="/view/:board/:view" element={<View />}></Route>
