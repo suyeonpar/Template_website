@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { firebaseAuth, signInWithEmailAndPassword } from '../firebase'
+import { signInWithPopup, GithubAuthProvider, GoogleAuthProvider, firebaseAuth, signInWithEmailAndPassword } from '../firebase'
 import { useNavigate, useHistory, NavLink } from 'react-router-dom'
 import { collection, doc, getDoc, getFirestore } from 'firebase/firestore'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logIn, loggedIn } from '../store'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGithub, faGoogle } from '@fortawesome/free-brands-svg-icons'
+
 
 const Container = styled.div`
   display: flex;
@@ -51,7 +54,7 @@ const Input = styled.input`
 const InputWrapper = styled.div`
   position: relative;
   margin-bottom: 20px;
-  justify-content: flex-end;
+  justify-content: start;
   display: flex;
   &:last-child{
     margin-bottom: 10px;
@@ -59,14 +62,14 @@ const InputWrapper = styled.div`
     }
   a{
     margin-top: 20px;
-    background-color: #40e0d0;
+    /* background-color: #40e0d0; */
     font-size: 14px;
     text-align: center;
-    padding: 5px 20px;
+    padding: 5px 10px;
     border-radius: 5px;
-    color: #fff;
+    color: #000;
     &:last-child{
-      background-color: #036;
+      /* background-color: #036; */
       margin-left: 10px;
     }
   }
@@ -77,7 +80,6 @@ const InputWrapper = styled.div`
     font-size: 8px;
     color: #007bff;
   }
-
 `
 const Lable = styled.label`
   position: absolute;
@@ -97,6 +99,25 @@ const Button = styled.button`
   color: #fff;
   cursor: pointer;
 `
+const SnsButton = styled.button`
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: ${props => props.$bgColor || 'gray'};
+  color: ${props => props.$color || 'white'};
+  font-size: 16px;
+  width: 50%;
+  transition: 0.5s;
+  &:hover{
+    background-color: ${props => props.$hoverBgcolor || '#666'};
+  }
+  svg{
+    margin-right: 8px;
+  }
+`
 
 function Login() {
 
@@ -105,6 +126,8 @@ function Login() {
   const [error, setError] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const userState = useSelector(state => state.user)
+  console.log(userState)
   //console.log(navigate);
   const errorMsg = (errorCode) =>{
     const firebaseError = {
@@ -116,7 +139,6 @@ function Login() {
     return firebaseError[errorCode] || '알 수 없는 에러가 발생했습니다.'
   }
 
-
   const LoginForm = async (e) =>{
     e.preventDefault(); //함수내에서만 쓸 수 있고 
     try{//오류가 있을 순 있지만 실행해주세요 오류가 없다면 try 를 실행
@@ -125,7 +147,7 @@ function Login() {
       const user = userLogin.user
       //console.log(user) // user정보만 콘솔에 뜬다
       sessionStorage.setItem("users", user.uid)
-      dispatch(logIn(user.uid))
+      dispatch(logIn(user.uid));
 
       const userDoc = doc(collection(getFirestore(),"users"), user.uid);
       //user 안에서 uid 값을 가지고 오겠다.
@@ -144,7 +166,43 @@ function Login() {
       console.log(error.code)
     }
   }
-  console.log(navigate);
+  //console.log(navigate);
+
+  const snsLogin = async (data) => {
+    //alert(data)
+    let provider; // 변수 설정해주고
+
+    switch(data){
+      case 'google':
+        provider = new GoogleAuthProvider();
+      break; //google일때만 작동 break는 끝내고 다음작업으로 넘어간다
+
+      case 'github':
+        provider = new GithubAuthProvider();
+        break;
+
+        default:
+          return;
+    } //aysnc는 function앞에~
+
+    try{
+      const result = await signInWithPopup(firebaseAuth, provider)
+      const user = result.user;
+      console.log(user)
+      sessionStorage.setItem("users", user.uid)
+      dispatch(logIn(user.uid))
+      navigate("/member", {
+        state:{
+          nickname: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL
+        }
+      })
+    }catch(error){
+      setError(errorMsg(error));
+    }
+  } //switch문 쓴 이유? > 로그인을 여러개 할땐 switch문이 낫다
+
 
   return (
     <>
@@ -166,7 +224,15 @@ function Login() {
           <NavLink to="/findemail">이메일 / 비밀번호 재설정</NavLink>
           <NavLink to="/member">회원가입</NavLink>
         </InputWrapper>
-        <p>{error}</p>
+        <InputWrapper>
+          <SnsButton onClick={()=>{snsLogin('google')}} $bgColor="#db4437" $hoverBgcolor="#b33225">
+            <FontAwesomeIcon icon={faGoogle} /> Login With Google
+          </SnsButton>
+          <SnsButton onClick={()=>{snsLogin('github')}} $bgColor="#333" $hoverBgcolor="#111">
+            <FontAwesomeIcon icon={faGithub} /> Login With Github
+          </SnsButton>
+        </InputWrapper>
+        {/* <p>{error}</p> */}
       </SignUp>
     </Container>
     </>

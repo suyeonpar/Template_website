@@ -196,7 +196,7 @@ function View() {
             }
           </ul>
           {
-            uid &&
+            uid && //로그인 했을때 댓글달기가 뜬다
           <Comment>
             <textarea value={comment} onChange={(e)=>{setComment(e.target.value)}}></textarea>
             <Button onClick={()=>{addComment(view)}}>댓글달기</Button>

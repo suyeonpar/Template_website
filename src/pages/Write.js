@@ -7,8 +7,6 @@ import Modal from '../components/Modal';
 import { useSelector } from 'react-redux';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 
-
-
 const Container = styled.div`
   width: 100%;
   height: 100%;

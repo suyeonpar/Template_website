@@ -56,6 +56,7 @@ const Button = styled.button`
 function Notice() {
 
   const [posts, setPosts] = useState([]);
+  const [likes, setLikes] = useState(Array(posts.length).fill(1));
   
   useEffect(()=>{
     const fechPosts = async () =>{
@@ -77,6 +78,15 @@ function Notice() {
     fechPosts();
   },[])
 
+  const toggleLike = (index) =>{
+    // 1. 원래 값을 복사
+    // 2. 내가 복사한 배열의 원하는 인덱스 번호의 값을 변경
+    // 3. 그 값을 원래 값에 붙혀넣기
+    const newLikes = [...likes]; // 1.
+    newLikes[index] = !newLikes[index] // 2.
+    setLikes(newLikes); // 3.
+  }
+
   if(posts.length === 0){
     return <div>로딩중</div>
   } // 데이터가 없으면 로딩중이 뜬다
@@ -91,6 +101,7 @@ function Notice() {
         <ListItem>작성자</ListItem>
         <ListItem>작성일</ListItem>
         <ListItem>조회수</ListItem>
+        <ListItem>좋아요</ListItem>
       </List>
       {
        posts.map((e,i)=>{
@@ -101,12 +112,13 @@ function Notice() {
             <ListItem>{e.nickname}</ListItem>
             <ListItem>{e.timestamp.toDate().toLocaleDateString()}</ListItem>
             <ListItem>{e.view}</ListItem>
+            <ListItem onClick={()=>{toggleLike(i)}}>{likes[i] ? '💖' : '🤍'}</ListItem>
           </List>
         )
        })
       }
       <ButtonWrap>
-      <Link to="/write/notice"><Button><FontAwesomeIcon icon={faPen} />글쓰기</Button></Link>
+        <Link to="/write/notice"><Button><FontAwesomeIcon icon={faPen} />글쓰기</Button></Link>
       </ButtonWrap>
     </BoardWrapper>
     </>
