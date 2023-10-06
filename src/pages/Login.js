@@ -127,7 +127,7 @@ function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userState = useSelector(state => state.user)
-  console.log(userState)
+  //console.log(userState)
   //console.log(navigate);
   const errorMsg = (errorCode) =>{
     const firebaseError = {
@@ -188,7 +188,7 @@ function Login() {
     try{
       const result = await signInWithPopup(firebaseAuth, provider)
       const user = result.user;
-      console.log(user)
+      //console.log(user)
       sessionStorage.setItem("users", user.uid)
       dispatch(logIn(user.uid))
       navigate("/member", {

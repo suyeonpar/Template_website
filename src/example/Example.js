@@ -84,7 +84,7 @@ const FetchData = async () =>{
     try{
         let res = await fetch("https://jsonplaceholder.typicode.com/photos?albumId=1")
         let data = await res.json();
-        console.log(data)
+        //console.log(data)
     }catch(error){
         console.log(error)
     }finally{
