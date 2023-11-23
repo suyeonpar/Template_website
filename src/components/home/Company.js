@@ -39,7 +39,7 @@ const Card = styled.div`
         padding: 1rem;
     }
     &:nth-child(3n-2){
-        background-color: rgb(29,78,700);
+        background-color: rgb(0, 28, 74);
     }
     &:hover svg{
         transform: rotateY(360deg);
@@ -74,18 +74,18 @@ const company = [
         "icon": faBuilding
     },
     {
-        "title" : "연혁",
-        "desc" : "연혁...",
+        "title" : "스킬",
+        "desc" : "내가 잘하는 것...",
         "icon": faHistory
     },
     {
-        "title" : "비전",
-        "desc" : "비전...",
+        "title" : "목표",
+        "desc" : "이루어 나갈 목표...",
         "icon": faPaperPlane
     },
     {
-        "title" : "인증서",
-        "desc" : "인증서...",
+        "title" : "계획중",
+        "desc" : "ing...",
         "icon": faMedal
     }
 ]

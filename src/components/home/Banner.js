@@ -104,7 +104,7 @@ function Banner() {
       TxtData.map((e,i)=>{
         return(
           <StyleSlide key={i}>
-            <img src={`./images/bg${i+1}.${i === 0 ? 'png' : 'jpg'}`} alt="slide" />
+            <img src={`./images/bg${i+1}.jpg`} alt="slide" />
             <DescContent>
               <h3 className='wow animate__fadeInDown' data-wow-duration="1s">{e.title}</h3>
               <p className='wow animate__fadeInUp' data-wow-duration="1s" data-wow-delay="0.5s">{e.desc}</p>

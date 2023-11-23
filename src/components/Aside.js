@@ -8,6 +8,7 @@ import { ToggleTheme } from '../store'
 
 const ASide = styled.div`
         position: fixed;
+        z-index: 99;
         right: 20px;
         bottom: 20px;
         box-shadow: 0px 0px 3px gray;

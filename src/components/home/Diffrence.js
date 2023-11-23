@@ -9,7 +9,7 @@ const Container = styled.div`
     padding-bottom: 48px;
     text-align: center;
     color: #fff;
-    background: url("https://via.placeholder.com/1920x450/005") fixed center center;
+    background: url("/newjeans.jpg") fixed center center;
 `
 const ContainerWrap = styled.div`
     max-width: 1280px;
