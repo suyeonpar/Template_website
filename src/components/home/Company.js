@@ -40,6 +40,7 @@ const Card = styled.div`
     }
     &:nth-child(3n-2){
         background-color: rgb(0, 28, 74);
+        color: white;  
     }
     &:hover svg{
         transform: rotateY(360deg);
